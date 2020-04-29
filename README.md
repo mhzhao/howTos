@@ -26,4 +26,4 @@ del hyper-v.txt
 
 Dism /online /enable-feature /featurename:Microsoft-Hyper-V-All /LimitAccess /ALL
 
-run the file as administator, at the end type **Y** to yes (note: do not shutdown the computer, the system will restart by itself), after restarting itself, you will see hyper-v related options under **Windows tools**
+run the file as administator, at the end type **Y** to yes (note: do not shutdown the computer, the system will restart by itself), after restarting itself, you will see hyper-v related options under **Windows Administrative tools**
