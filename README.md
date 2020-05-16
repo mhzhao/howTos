@@ -23,9 +23,13 @@ You need to **move** the App to a difference location (e.g. Desktop/) to use it.
 > DevicePath = PciRoot(0x0)/Pci(0x1,0x1)/Pci(0x0,0x0)/Pci(0x0,0x0)/Pci(0x0,0x0)
 4. Mount your EFI partition (I use **Clover Configurator** to do this) and make a copy of your current config.plist (mine is located in /Volumes/EFI/EFI/CLOVER/config.plist). Then open config.plist, find the "**Devices**" section, and then move down to the "**Properties**" sub section. Below **Properties**, create a new Key for the PCI path of the Vega GPU
 > \<key\>PciRoot(0x0)/Pci(0x1,0x1)/Pci(0x0,0x0)/Pci(0x0,0x0)/Pci(0x0,0x0)\</key\>
+
 > \<dict\>
+
 >   
+
 > \</dict\>
+
 Inside the <key> </key> pair is the DevicePath you find in *3.*
 Go to the kext file you generate in *2.* (yours should be VGTab_XXXX.kext, here mine is VGTab_56.kext), in **Terminal** do the following `cd ~/Desktop/VegaTab_56.kext/Contents` change the right kext name by your own, e.g. if you have *VGTab_64.kext*, you should do `cd ~/Desktop/VegaTab_64.kext/Contents`. Open the file *Info.plist* under the directory, find **aty_properties** key, copy the contents inside <dict> </dict> below it, paste them into the <dict> </dict> you just created in the config.plist file. Save and reboot
 
