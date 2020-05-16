@@ -27,9 +27,9 @@ You need to **move** the App to a difference location (e.g. Desktop/) to use it.
 <dict> 
 
 </dict>
-```
-Inside the <key> </key> pair is the DevicePath you find in *3.*
-Go to the kext file you generate in *2.* (yours should be VGTab_XXXX.kext, here mine is VGTab_56.kext), in **Terminal** do the following `cd ~/Desktop/VegaTab_56.kext/Contents` change the right kext name by your own, e.g. if you have *VGTab_64.kext*, you should do `cd ~/Desktop/VegaTab_64.kext/Contents`. Open the file *Info.plist* under the directory, find **aty_properties** key, copy the contents inside <dict> </dict> below it, paste them into the <dict> </dict> you just created in the config.plist file. Save and reboot
+``` 
+  Inside the <key> </key> pair is the DevicePath you find in *3.*
+  Go to the kext file you generate in *2.* (yours should be VGTab_XXXX.kext, here mine is VGTab_56.kext), in **Terminal** do  the following `cd ~/Desktop/VegaTab_56.kext/Contents` change the right kext name by your own, e.g. if you have             *VGTab_64.kext*, you should do `cd ~/Desktop/VegaTab_64.kext/Contents`. Open the file *Info.plist* under the directory, find **aty_properties** key, copy the contents inside <dict> </dict> below it, paste them into the <dict> </dict> you just created in the config.plist file. Save and reboot
 
 ## Windows
 #### 1. windows 10 home edition enable Hyper-V
