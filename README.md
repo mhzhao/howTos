@@ -46,3 +46,6 @@ del hyper-v.txt
 Dism /online /enable-feature /featurename:Microsoft-Hyper-V-All /LimitAccess /ALL
 
 run the file as administator, at the end type **Y** to yes (note: do not shutdown the computer, the system will restart by itself), after restarting itself, you will see hyper-v related options under **Windows Administrative tools**
+#### 2. figures in word look messy in wondows while look normal in Mac
+When edited the word in Mac the figures show normal, but looks terrible (e.g. rotating 90 degree) when open the word in Windows. A better and easy way to fix this is to reformat the pdf figures by `pdfjam` or `pdfcrop` with landscape format.
+`pdfjam` is very nice and easy program that can rearrange the figures and trim margins. Check [examples](https://github.com/DavidFirth/pdfjam). `pdfcrop` is a simple way to remove empty margins or set margins from each page in the input PDF file.
