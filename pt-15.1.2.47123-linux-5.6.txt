@@ -1,0 +1,181 @@
+diff -puNr --no-dereference parallels-tools-15.1.2.47123.saved/prl_fs/SharedFolders/Guest/Linux/prl_fs/prlfs_compat.h parallels-tools-15.1.2.47123/prl_fs/SharedFolders/Guest/Linux/prl_fs/prlfs_compat.h
+--- parallels-tools-15.1.2.47123.saved/prl_fs/SharedFolders/Guest/Linux/prl_fs/prlfs_compat.h	2019-12-08 17:18:48.986636072 +1100
++++ parallels-tools-15.1.2.47123/prl_fs/SharedFolders/Guest/Linux/prl_fs/prlfs_compat.h	2020-04-10 19:34:33.094299692 +1000
+@@ -11,7 +11,11 @@
+ 
+ static struct proc_dir_entry *
+ prlfs_proc_create(char *name, umode_t mode, struct proc_dir_entry *parent,
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5,6,0)
+                   struct file_operations *fops)
++#else
++                  struct proc_ops *fops)
++#endif
+ {
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
+ 	struct proc_dir_entry *p = create_proc_entry(name, mode, parent);
+diff -puNr --no-dereference parallels-tools-15.1.2.47123.saved/prl_fs/SharedFolders/Guest/Linux/prl_fs/super.c parallels-tools-15.1.2.47123/prl_fs/SharedFolders/Guest/Linux/prl_fs/super.c
+--- parallels-tools-15.1.2.47123.saved/prl_fs/SharedFolders/Guest/Linux/prl_fs/super.c	2019-12-08 17:18:48.986636072 +1100
++++ parallels-tools-15.1.2.47123/prl_fs/SharedFolders/Guest/Linux/prl_fs/super.c	2020-04-10 19:41:59.844294722 +1000
+@@ -517,12 +517,20 @@ static int proc_sf_open(struct inode *in
+ 	return seq_open(file, &seq_sf_op);
+ }
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5,6,0)
+ static struct file_operations proc_sf_operations = {
+ 	.owner		= THIS_MODULE,
+ 	.open		= proc_sf_open,
+ 	.read		= seq_read,
+ 	.llseek		= seq_lseek,
+ 	.release	= seq_release,
++#else
++static struct proc_ops proc_sf_operations = {
++	.proc_open	= proc_sf_open,
++	.proc_read	= seq_read,
++	.proc_lseek	= seq_lseek,
++	.proc_release	= seq_release,
++#endif
+ };
+ 
+ static int prlfs_proc_init(void)
+diff -puNr --no-dereference parallels-tools-15.1.2.47123.saved/prl_fs_freeze/Snapshot/Guest/Linux/prl_freeze/prl_fs_freeze.c parallels-tools-15.1.2.47123/prl_fs_freeze/Snapshot/Guest/Linux/prl_freeze/prl_fs_freeze.c
+--- parallels-tools-15.1.2.47123.saved/prl_fs_freeze/Snapshot/Guest/Linux/prl_freeze/prl_fs_freeze.c	2019-12-08 17:18:48.989969405 +1100
++++ parallels-tools-15.1.2.47123/prl_fs_freeze/Snapshot/Guest/Linux/prl_freeze/prl_fs_freeze.c	2020-04-10 19:56:42.567618237 +1000
+@@ -347,6 +347,7 @@ int freeze_open(struct inode *inode, str
+ 	return seq_open(file, &freeze_seq_ops);
+ }
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5,6,0)
+ struct file_operations freeze_ops = {
+ 	.owner		= THIS_MODULE,
+ 	.open		= freeze_open,
+@@ -354,6 +355,14 @@ struct file_operations freeze_ops = {
+ 	.write		= freeze_write,
+ 	.llseek		= seq_lseek,
+ 	.release	= seq_release,
++#else
++struct proc_ops freeze_ops = {
++	.proc_open	= freeze_open,
++	.proc_read	= seq_read,
++	.proc_write	= freeze_write,
++	.proc_lseek	= seq_lseek,
++	.proc_release	= seq_release,
++#endif
+ };
+ 
+ int __init init_module(void)
+diff -puNr --no-dereference parallels-tools-15.1.2.47123.saved/prl_fs_freeze/Snapshot/Guest/Linux/prl_freeze/prlfs_freeze_compat.h parallels-tools-15.1.2.47123/prl_fs_freeze/Snapshot/Guest/Linux/prl_freeze/prlfs_freeze_compat.h
+--- parallels-tools-15.1.2.47123.saved/prl_fs_freeze/Snapshot/Guest/Linux/prl_freeze/prlfs_freeze_compat.h	2019-12-08 17:18:48.989969405 +1100
++++ parallels-tools-15.1.2.47123/prl_fs_freeze/Snapshot/Guest/Linux/prl_freeze/prlfs_freeze_compat.h	2020-04-10 19:54:22.230953133 +1000
+@@ -10,7 +10,11 @@
+ static struct proc_dir_entry *
+ prlfs_freeze_proc_create(char *name, umode_t mode,
+                          struct proc_dir_entry *parent,
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5,6,0)
+                          struct file_operations *fops)
++#else
++                         struct proc_ops *fops)
++#endif
+ {
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
+ 	struct proc_dir_entry *p = create_proc_entry(name, mode, parent);
+diff -puNr --no-dereference parallels-tools-15.1.2.47123.saved/prl_tg/Toolgate/Guest/Linux/prl_tg/prltg.c parallels-tools-15.1.2.47123/prl_tg/Toolgate/Guest/Linux/prl_tg/prltg.c
+--- parallels-tools-15.1.2.47123.saved/prl_tg/Toolgate/Guest/Linux/prl_tg/prltg.c	2019-12-08 17:18:48.986636072 +1100
++++ parallels-tools-15.1.2.47123/prl_tg/Toolgate/Guest/Linux/prl_tg/prltg.c	2020-04-10 19:31:20.547635161 +1000
+@@ -390,7 +390,12 @@ out:
+ 
+ static struct proc_dir_entry *
+ prltg_proc_create_data(char *name, umode_t mode, struct proc_dir_entry *parent,
+-	struct file_operations *fops, void *data)
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5,6,0)
++	struct file_operations *fops,
++#else
++	struct proc_ops *fops,
++#endif
++	void *data)
+ {
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(3,10,0)
+ 	struct proc_dir_entry *p = create_proc_entry(name, mode, parent);
+@@ -405,7 +410,11 @@ prltg_proc_create_data(char *name, umode
+ #endif
+ }
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5,6,0)
+ int prl_tg_probe_common(struct pci_dev *pdev, board_t board, struct file_operations *fops)
++#else
++int prl_tg_probe_common(struct pci_dev *pdev, board_t board, struct proc_ops *fops)
++#endif
+ {
+ 	struct tg_dev *dev;
+ 	int rc = -ENOMEM;
+@@ -508,10 +517,17 @@ void prl_tg_remove_common(struct pci_dev
+ }
+ EXPORT_SYMBOL(prl_tg_remove_common);
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5,6,0)
+ static struct file_operations prl_tg_fops = {
+ 	.write		= prl_tg_write,
+ 	.open		= prl_tg_open,
+ 	.release	= prl_tg_release,
++#else
++static struct proc_ops prl_tg_fops = {
++	.proc_write	= prl_tg_write,
++	.proc_open	= prl_tg_open,
++	.proc_release	= prl_tg_release,
++#endif
+ };
+ 
+ static int prl_tg_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+diff -puNr --no-dereference parallels-tools-15.1.2.47123.saved/prl_tg/Toolgate/Guest/Linux/prl_tg/prltg_common.h parallels-tools-15.1.2.47123/prl_tg/Toolgate/Guest/Linux/prl_tg/prltg_common.h
+--- parallels-tools-15.1.2.47123.saved/prl_tg/Toolgate/Guest/Linux/prl_tg/prltg_common.h	2019-12-08 17:18:48.986636072 +1100
++++ parallels-tools-15.1.2.47123/prl_tg/Toolgate/Guest/Linux/prl_tg/prltg_common.h	2020-04-10 19:24:16.170973213 +1000
+@@ -188,9 +188,17 @@ tg_out(struct tg_dev *dev, unsigned long
+ }
+ 
+ struct pci_dev;
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5,6,0)
+ struct file_operations;
++#else
++struct proc_ops;
++#endif
+ // Exported functions
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5,6,0)
+ int prl_tg_probe_common(struct pci_dev *pdev, board_t board, struct file_operations *fops);
++#else
++int prl_tg_probe_common(struct pci_dev *pdev, board_t board, struct proc_ops *fops);
++#endif
+ void prl_tg_remove_common(struct pci_dev *pdev);
+ #ifdef CONFIG_PM
+ int prl_tg_suspend_common(struct pci_dev *pdev, pm_message_t state);
+diff -puNr --no-dereference parallels-tools-15.1.2.47123.saved/prl_vid/Video/Guest/Linux/kmod/prlvtg.c parallels-tools-15.1.2.47123/prl_vid/Video/Guest/Linux/kmod/prlvtg.c
+--- parallels-tools-15.1.2.47123.saved/prl_vid/Video/Guest/Linux/kmod/prlvtg.c	2019-12-08 17:18:48.989969405 +1100
++++ parallels-tools-15.1.2.47123/prl_vid/Video/Guest/Linux/kmod/prlvtg.c	2020-04-10 19:50:18.034289184 +1000
+@@ -486,6 +486,7 @@ static int prl_vtg_mmap(struct file *fil
+ }
+ #endif
+ 
++#if LINUX_VERSION_CODE < KERNEL_VERSION(5,6,0)
+ static struct file_operations prl_vtg_fops = {
+ 	.write		= prl_vtg_write,
+ #ifdef HAVE_OLD_IOCTL
+@@ -499,6 +500,21 @@ static struct file_operations prl_vtg_fo
+ #ifdef PRLVTG_MMAP
+ 	.mmap		= prl_vtg_mmap,
+ #endif
++#else
++static struct proc_ops prl_vtg_fops = {
++	.proc_write	= prl_vtg_write,
++#ifdef HAVE_OLD_IOCTL
++	.proc_compat_ioctl	= prl_vtg_ioctl,
++#endif
++#ifdef HAVE_UNLOCKED_IOCTL
++	.proc_ioctl	= prl_vtg_unlocked_ioctl,
++#endif
++	.proc_open		= prl_vtg_open,
++	.proc_release	= prl_vtg_release,
++#ifdef PRLVTG_MMAP
++	.proc_mmap		= prl_vtg_mmap,
++#endif
++#endif
+ };
+ 
+ int prl_vtg_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
