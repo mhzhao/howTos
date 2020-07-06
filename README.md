@@ -31,6 +31,13 @@ You need to **move** the App to a difference location (e.g. Desktop/) to use it.
   Inside the <key> </key> pair is the DevicePath you find in *3.*
   Go to the kext file you generate in *2.* (yours should be VGTab_XXXX.kext, here mine is VGTab_56.kext), in **Terminal** do  the following `cd ~/Desktop/VegaTab_56.kext/Contents` change the right kext name by your own, e.g. if you have             *VGTab_64.kext*, you should do `cd ~/Desktop/VegaTab_64.kext/Contents`. Open the file *Info.plist* under the directory, find **aty_properties** key, copy the contents inside <dict> </dict> below it, paste them into the <dict> </dict> you just created in the config.plist file. Save and reboot
 
+### Gnuplot pdfcairo terminal font messy issue
+It is caused by the pango 1.44 version, revert to version 1.43 for now to use
+```
+brew uninstall --ignore-dependencies pango
+brew install iltommi/brews/pango
+```
+
 ## Windows
 #### 1. windows 10 home edition enable Hyper-V
 save the following script to a file named: Hyper-V.cmd, 
