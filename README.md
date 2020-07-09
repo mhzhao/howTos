@@ -38,6 +38,15 @@ brew uninstall --ignore-dependencies pango
 brew install iltommi/brews/pango
 ```
 
+### pip install older python version site-packages
+`pip freeze --path /usr/local/lib/python3.7/site-packages | awk -F = '{print $1}' | xargs -I{} pip install {}`
+to upgrade all pip installed packages
+`pip list --outdated | sed -n '3,$ p' | awk -F ' ' '{print $1}' | xargs su pip install --upgrade`
+
+### manually enable kernels in jupyter
+copy the kernel files to the appropriate locate, for example, for ROOT
+`cp -r /usr/local/Cellar/root/6.22.00_1/etc/root/notebook/kernels/root /usr/local/share/jupyter/kernels`
+
 ## Windows
 #### 1. windows 10 home edition enable Hyper-V
 save the following script to a file named: Hyper-V.cmd, 
