@@ -46,6 +46,8 @@ to upgrade all pip installed packages
 
 `pip list --outdated | sed -n '3,$ p' | awk -F ' ' '{print $1}' | xargs su pip install --upgrade`
 
+for the `pip` itself upgrade may cause errors, one needs to change the `which pip` to the correct version of `pip3 --version`, e.g. change `/usr/local/opt/python/libexec/bin/pip`
+
 ### manually enable kernels in jupyter
 copy the kernel files to the appropriate locate, for example, for ROOT
 
