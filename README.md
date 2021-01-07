@@ -53,6 +53,12 @@ copy the kernel files to the appropriate locate, for example, for ROOT
 
 `cp -r /usr/local/Cellar/root/6.22.00_1/etc/root/notebook/kernels/root /usr/local/share/jupyter/kernels`
 
+### remove audio device (from MIDI Setup)
+
+The driver should be in the "/Library/Audio/Plug-Ins/HAL" folder (It's the standard place for Core audio drivers)
+e.g. delete MorphVOX device, remove driver (named SBVirtualMic.driver) if you after uninstall see MorphVOX Audio in Sound Settings
+`sudo rm -rf /Library/Audio/Plug-Ins/HAL/SBVirtualMic.driver`
+
 ## Windows
 #### 1. windows 10 home edition enable Hyper-V
 save the following script to a file named: Hyper-V.cmd, 
