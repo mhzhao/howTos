@@ -59,6 +59,10 @@ The driver should be in the "/Library/Audio/Plug-Ins/HAL" folder (It's the stand
 e.g. delete MorphVOX device, remove driver (named SBVirtualMic.driver) if you after uninstall see MorphVOX Audio in Sound Settings
 `sudo rm -rf /Library/Audio/Plug-Ins/HAL/SBVirtualMic.driver`
 
+### ffmpeg writing Chinese subtitle problems
+
+The problem showing `fontselect: failed to find any fallback for font: ` and `Glyph 0X7F8E not found, selecting one more font for` when trying to write Chinese subtitles, it's caused by libass latest version 0.15.1, go back to version 0.15.0 works, following this method to set back older version [How to install an older homebrew package](https://remarkablemark.org/blog/2017/02/03/install-brew-package-version/)
+
 ## Windows
 #### 1. windows 10 home edition enable Hyper-V
 save the following script to a file named: Hyper-V.cmd, 
